@@ -32,10 +32,17 @@ export const AddAccountForm: React.FC<AddAccountFormProps> = ({ onSuccess }) => 
     e.preventDefault();
     if (!formData.name.trim() || !formData.category) return;
 
+    const id =
+      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
     addAccount({
+      id,
       name: formData.name.trim(),
       type: formData.type,
       category: formData.category,
+      createdAt: new Date(),
     });
 
     // Track account creation

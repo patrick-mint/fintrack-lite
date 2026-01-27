@@ -26,7 +26,6 @@ const Navigation: React.FC = () => {
     { href: "/add-account", label: t("nav.addAccount"), icon: "➕" },
     { href: "/record-balances", label: t("nav.transactions"), icon: "💸" },
     { href: "/historical", label: t("nav.historical"), icon: "📈" },
-    { href: "/settings", label: t("nav.settings"), icon: "⚙️" },
   ];
 
   return (

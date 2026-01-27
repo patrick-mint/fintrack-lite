@@ -5,8 +5,8 @@ type Dict = Record<string, string>;
 // Keep keys stable. Add new keys here as UI grows.
 export const translations: Record<Locale, Dict> = {
   en: {
-    'app.title.full': 'Personal Finance Tracker',
-    'app.title.short': 'Finance Tracker',
+    'app.title.full': 'FinTrack Lite',
+    'app.title.short': 'FinTrack',
 
 
 
@@ -21,6 +21,8 @@ export const translations: Record<Locale, Dict> = {
     'nav.signedInAs': 'Signed in as',
 
     'nav.openMenu': 'Open main menu',
+    'nav.menu': 'Menu',
+    'nav.language': 'Language',
 
     'auth.login': 'Login',
 
@@ -170,12 +172,10 @@ export const translations: Record<Locale, Dict> = {
     'welcome.notice.title': 'Important:',
     'welcome.notice.body': 'All your data is stored locally in this browser. Export your data regularly from Settings to avoid losing it if you clear browser data.',
     'welcome.privacyInfo': 'Privacy Info',
-    'nav.menu': 'Menu',
-    'nav.language': 'Language'
   },
   th: {
-    'app.title.full': 'บันทึกการเงินส่วนบุคคล',
-    'app.title.short': 'บันทึกการเงิน',
+    'app.title.full': 'FinTrack Lite',
+    'app.title.short': 'FinTrack',
 
 
 
@@ -190,6 +190,8 @@ export const translations: Record<Locale, Dict> = {
     'nav.signedInAs': 'เข้าสู่ระบบด้วย',
 
     'nav.openMenu': 'เปิดเมนูหลัก',
+    'nav.menu': 'เมนู',
+    'nav.language': 'ภาษา',
 
     'auth.login': 'เข้าสู่ระบบ',
 
@@ -338,7 +340,5 @@ export const translations: Record<Locale, Dict> = {
     'welcome.notice.title': 'สำคัญ:',
     'welcome.notice.body': 'ข้อมูลทั้งหมดถูกเก็บไว้ในเบราว์เซอร์นี้เท่านั้น ควรส่งออกข้อมูลเป็นประจำจากหน้า “ตั้งค่า” เพื่อป้องกันข้อมูลหายหากล้างข้อมูลเบราว์เซอร์',
     'welcome.privacyInfo': 'ข้อมูลความเป็นส่วนตัว',
-    'nav.menu': 'เมนู',
-    'nav.language': 'ภาษา',
   },
 };
