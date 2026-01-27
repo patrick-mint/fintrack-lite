@@ -2,7 +2,7 @@
 
 import React from 'react';
 import ClientOnly from '@/components/ClientOnly';
-import {'Settings'} from '@/components/Settings';
+import Settings from '@/components/Settings';
 
 export default function Page() {
   return (
