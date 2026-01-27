@@ -20,10 +20,8 @@ const WelcomeScreen: React.FC = () => {
         {/* Privacy Banner */}
         <div className="bg-green-50 border border-green-200 rounded-md p-6 mb-8">
           <div className="flex items-center justify-center">
-            <div className="flex-shrink-0">
-              <span className="text-2xl mr-3">🔒</span>
-            </div>
             <div className="text-center">
+              <span className="text-2xl mr-3">🔒</span>
               <h2 className="text-lg font-medium text-green-800">{t('welcome.privacy.heading')}</h2>
               <p className="mt-1 text-green-700">{t('welcome.privacy.body')}</p>
             </div>

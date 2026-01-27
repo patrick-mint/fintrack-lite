@@ -170,6 +170,8 @@ export const translations: Record<Locale, Dict> = {
     'welcome.notice.title': 'Important:',
     'welcome.notice.body': 'All your data is stored locally in this browser. Export your data regularly from Settings to avoid losing it if you clear browser data.',
     'welcome.privacyInfo': 'Privacy Info',
+    'nav.menu': 'Menu',
+    'nav.language': 'Language'
   },
   th: {
     'app.title.full': 'บันทึกการเงินส่วนบุคคล',
@@ -336,5 +338,7 @@ export const translations: Record<Locale, Dict> = {
     'welcome.notice.title': 'สำคัญ:',
     'welcome.notice.body': 'ข้อมูลทั้งหมดถูกเก็บไว้ในเบราว์เซอร์นี้เท่านั้น ควรส่งออกข้อมูลเป็นประจำจากหน้า “ตั้งค่า” เพื่อป้องกันข้อมูลหายหากล้างข้อมูลเบราว์เซอร์',
     'welcome.privacyInfo': 'ข้อมูลความเป็นส่วนตัว',
+    'nav.menu': 'เมนู',
+    'nav.language': 'ภาษา',
   },
 };
