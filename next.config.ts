@@ -1,13 +1,15 @@
 import type { NextConfig } from "next";
 
-const repo = "personal-finance-tracker";
+const repo = "fintrack-lite";
 
 const nextConfig: NextConfig = {
   output: "export",
-  images: { unoptimized: true },
+  trailingSlash: true,
   basePath: `/${repo}`,
   assetPrefix: `/${repo}/`,
-  trailingSlash: true,
+  images: {
+    unoptimized: true,
+  },
 };
 
 export default nextConfig;
