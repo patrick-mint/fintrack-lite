@@ -2,7 +2,7 @@
 
 import React from 'react';
 import ClientOnly from '@/components/ClientOnly';
-import RecordBalances from '@/components/RecordBalances';
+import { RecordBalances } from '@/components/RecordBalances';
 
 export default function Page() {
   return (

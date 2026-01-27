@@ -2,7 +2,7 @@
 
 import React from 'react';
 import ClientOnly from '@/components/ClientOnly';
-import HistoricalTracking from '@/components/HistoricalTracking';
+import { HistoricalTracking } from '@/components/HistoricalTracking';
 
 export default function Page() {
   return (

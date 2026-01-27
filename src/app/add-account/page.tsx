@@ -2,7 +2,7 @@
 
 import React from 'react';
 import ClientOnly from '@/components/ClientOnly';
-import AddAccountForm from '@/components/AddAccountForm';
+import { AddAccountForm } from '@/components/AddAccountForm';
 
 export default function Page() {
   return (
