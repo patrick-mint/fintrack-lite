@@ -23,7 +23,6 @@ export const BalanceSheet: React.FC = () => {
     setEditingAccount(null);
   };
 
-  // Translate category labels (stored value stays English for data stability)
   const tCategory = (category: string) => {
     const key = `accountCategory.${category}`;
     const translated = t(key);

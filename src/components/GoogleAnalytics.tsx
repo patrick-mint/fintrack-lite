@@ -7,7 +7,6 @@ const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const ANALYTICS_ENABLED = process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === 'true';
 
 export const GoogleAnalytics = () => {
-  // Only render Google Analytics when all conditions are met
   if (!GA_TRACKING_ID || !IS_PRODUCTION || !ANALYTICS_ENABLED) {
     return null;
   }

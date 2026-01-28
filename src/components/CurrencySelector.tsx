@@ -28,7 +28,6 @@ export const CurrencySelector: React.FC<CurrencySelectorProps> = ({
     const currency = SUPPORTED_CURRENCIES.find(c => c.code === currencyCode);
     if (currency) {
       setSelectedCurrency(currency);
-      // Track currency change
       trackEvent('currency_changed', {
         from_currency: selectedCurrency.code,
         to_currency: currency.code,

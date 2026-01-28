@@ -168,7 +168,6 @@ export const FinanceProvider = ({
 
   const deleteAccount = (accountId: string) => {
     setAccounts((prev) => prev.filter((a) => a.id !== accountId));
-    // keep transactions
   };
 
   const addTransaction = (tx: Transaction) => {

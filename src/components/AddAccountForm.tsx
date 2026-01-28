@@ -24,7 +24,7 @@ export const AddAccountForm: React.FC<AddAccountFormProps> = ({ onSuccess }) => 
   const tCategory = (category: string) => {
     const key = `accountCategory.${category}`;
     const label = t(key);
-    return label === key ? category : label; // fallback ถ้าไม่มีคำแปล
+    return label === key ? category : label;
   };
 
   const handleTypeChange = (newType: AccountType) => {
