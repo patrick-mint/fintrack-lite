@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, {
@@ -21,7 +22,6 @@ interface FinanceContextType {
 
   addAccount: (account: Account) => void;
 
-  // ✅ เปลี่ยนให้ตรงกับการใช้งานจริงใน BalanceSheet/ManageAccountModal
   updateAccount: (
     accountId: string,
     updates: Pick<Account, "name" | "category" | "type">,
@@ -172,7 +172,6 @@ export const FinanceProvider = ({
   };
 
   const addTransaction = (tx: Transaction) => {
-    // ✅ RecordBalances ส่ง id: '' มาได้ → generate ให้
     const next: Transaction = {
       ...tx,
       id: tx?.id?.trim() ? tx.id : makeId(),
