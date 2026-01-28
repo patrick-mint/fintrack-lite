@@ -14,17 +14,24 @@ export const AddAccountForm: React.FC<AddAccountFormProps> = ({ onSuccess }) => 
   const { addAccount } = useFinance();
   const { trackEvent } = useAnalytics();
   const { t } = useLocale();
+
   const [formData, setFormData] = useState({
     name: '',
     type: 'asset' as AccountType,
     category: ACCOUNT_CATEGORIES.asset[0] as string,
   });
 
+  const tCategory = (category: string) => {
+    const key = `accountCategory.${category}`;
+    const label = t(key);
+    return label === key ? category : label; // fallback ถ้าไม่มีคำแปล
+  };
+
   const handleTypeChange = (newType: AccountType) => {
     setFormData({
       ...formData,
       type: newType,
-      category: ACCOUNT_CATEGORIES[newType][0], // Set default category
+      category: ACCOUNT_CATEGORIES[newType][0],
     });
   };
 
@@ -45,13 +52,11 @@ export const AddAccountForm: React.FC<AddAccountFormProps> = ({ onSuccess }) => 
       createdAt: new Date(),
     });
 
-    // Track account creation
     trackEvent('account_created', {
       account_type: formData.type,
       account_category: formData.category,
     });
 
-    // Reset form
     setFormData({
       name: '',
       type: 'asset',
@@ -90,7 +95,7 @@ export const AddAccountForm: React.FC<AddAccountFormProps> = ({ onSuccess }) => 
         >
           <option value="asset">{t('accounts.asset')}</option>
           <option value="liability">{t('accounts.liability')}</option>
-                  </select>
+        </select>
       </div>
 
       <div>
@@ -105,7 +110,7 @@ export const AddAccountForm: React.FC<AddAccountFormProps> = ({ onSuccess }) => 
         >
           {ACCOUNT_CATEGORIES[formData.type].map((category) => (
             <option key={category} value={category}>
-              {category}
+              {tCategory(category)}
             </option>
           ))}
         </select>

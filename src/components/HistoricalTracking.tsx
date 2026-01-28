@@ -7,24 +7,38 @@ import { NetWorthChart } from './NetWorthChart';
 import { useCurrency } from '@/context/CurrencyContext';
 import { CurrencySelector } from './CurrencySelector';
 import { computeAccountSeries } from '@/lib/finance';
+import { useLocale } from '@/context/LocaleContext';
+import type { AccountType } from '@/types/finance';
+
+type DateRange = '7d' | '30d' | '90d' | '1y' | 'all';
 
 export const HistoricalTracking: React.FC = () => {
   const { accounts, transactions, isLoading } = useFinance();
   const { formatCurrency } = useCurrency();
+  const { t } = useLocale();
+
   const [selectedAccount, setSelectedAccount] = useState<string>('all');
-  const [dateRange, setDateRange] = useState<'7d' | '30d' | '90d' | '1y' | 'all'>('30d');
+  const [dateRange, setDateRange] = useState<DateRange>('30d');
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => setIsClient(true), []);
 
-  const getDateRangeStart = (range: string): string | undefined => {
+  const tAccountType = (type: AccountType) => {
+    return type === 'asset' ? t('accounts.asset') : t('accounts.liability');
+  };
+
+  const getDateRangeStart = (range: DateRange): string | undefined => {
     const now = new Date();
     const days =
-      range === '7d' ? 7 :
-      range === '30d' ? 30 :
-      range === '90d' ? 90 :
-      range === '1y' ? 365 :
-      null;
+      range === '7d'
+        ? 7
+        : range === '30d'
+          ? 30
+          : range === '90d'
+            ? 90
+            : range === '1y'
+              ? 365
+              : null;
 
     if (days == null) return undefined;
 
@@ -36,11 +50,11 @@ export const HistoricalTracking: React.FC = () => {
 
   const accountsWithAnyTx = useMemo(() => {
     const set = new Set<string>();
-    for (const t of transactions) {
-      if (t.fromAccountId) set.add(t.fromAccountId);
-      if (t.toAccountId) set.add(t.toAccountId);
+    for (const tx of transactions) {
+      if (tx.fromAccountId) set.add(tx.fromAccountId);
+      if (tx.toAccountId) set.add(tx.toAccountId);
     }
-    return accounts.filter(a => set.has(a.id));
+    return accounts.filter((a) => set.has(a.id));
   }, [accounts, transactions]);
 
   const seriesByAccount = useMemo(() => {
@@ -71,15 +85,15 @@ export const HistoricalTracking: React.FC = () => {
     return ((latest - first) / Math.abs(first)) * 100;
   };
 
-  const selectedAccountData = accounts.find(acc => acc.id === selectedAccount);
+  const selectedAccountData = accounts.find((acc) => acc.id === selectedAccount);
 
   if (!isClient || isLoading) {
     return (
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Historical Tracking</h1>
-            <p className="text-gray-600">Loading your data...</p>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">{t('historical.title')}</h1>
+            <p className="text-gray-600">{t('historical.loading')}</p>
           </div>
           <div className="animate-pulse space-y-4">
             <div className="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -95,8 +109,8 @@ export const HistoricalTracking: React.FC = () => {
       <div className="max-w-6xl mx-auto">
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="text-center py-12">
-            <div className="text-gray-500 text-lg mb-4">No transaction data available</div>
-            <p className="text-gray-400">Add transactions to see charts and trends.</p>
+            <div className="text-gray-500 text-lg mb-4">{t('historical.noData.title')}</div>
+            <p className="text-gray-400">{t('historical.noData.subtitle')}</p>
           </div>
         </div>
       </div>
@@ -107,8 +121,8 @@ export const HistoricalTracking: React.FC = () => {
     <div className="max-w-6xl mx-auto space-y-6">
       <div className="bg-white rounded-lg shadow-lg p-6">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Historical Tracking</h1>
-          <p className="text-gray-600">View balances and net worth trends over time</p>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">{t('historical.title')}</h1>
+          <p className="text-gray-600">{t('historical.subtitle')}</p>
         </div>
 
         <div className="mb-6 flex justify-end">
@@ -118,7 +132,7 @@ export const HistoricalTracking: React.FC = () => {
         <div className="flex flex-col sm:flex-row gap-4 mb-8">
           <div className="flex-1">
             <label htmlFor="account-select" className="block text-sm font-medium text-gray-700 mb-2">
-              Select Account
+              {t('historical.selectAccount')}
             </label>
             <select
               id="account-select"
@@ -126,10 +140,10 @@ export const HistoricalTracking: React.FC = () => {
               onChange={(e) => setSelectedAccount(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value="all">All Accounts Overview</option>
+              <option value="all">{t('historical.allAccounts')}</option>
               {accountsWithAnyTx.map((account) => (
                 <option key={account.id} value={account.id}>
-                  {account.name} ({account.type})
+                  {account.name} ({tAccountType(account.type)})
                 </option>
               ))}
             </select>
@@ -137,19 +151,19 @@ export const HistoricalTracking: React.FC = () => {
 
           <div className="flex-1">
             <label htmlFor="date-range" className="block text-sm font-medium text-gray-700 mb-2">
-              Time Period
+              {t('historical.timePeriod')}
             </label>
             <select
               id="date-range"
               value={dateRange}
-              onChange={(e) => setDateRange(e.target.value as any)}
+              onChange={(e) => setDateRange(e.target.value as DateRange)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value="7d">Last 7 days</option>
-              <option value="30d">Last 30 days</option>
-              <option value="90d">Last 90 days</option>
-              <option value="1y">Last year</option>
-              <option value="all">All time</option>
+              <option value="7d">{t('historical.range.7d')}</option>
+              <option value="30d">{t('historical.range.30d')}</option>
+              <option value="90d">{t('historical.range.90d')}</option>
+              <option value="1y">{t('historical.range.1y')}</option>
+              <option value="all">{t('historical.range.all')}</option>
             </select>
           </div>
         </div>
@@ -165,7 +179,7 @@ export const HistoricalTracking: React.FC = () => {
               />
             </div>
 
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Individual Account Summary</h2>
+            <h2 className="text-xl font-bold text-gray-800 mb-4">{t('historical.summary.title')}</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
               {accountsWithAnyTx.map((account) => {
@@ -179,16 +193,18 @@ export const HistoricalTracking: React.FC = () => {
                     <div className="text-lg font-bold mb-1 text-gray-900">
                       {formatCurrency(latestBalance)}
                     </div>
-                    <div className={`text-sm flex items-center space-x-2 ${
-                      change >= 0 ? 'text-green-600' : 'text-red-600'
-                    }`}>
+                    <div
+                      className={`text-sm flex items-center space-x-2 ${
+                        change >= 0 ? 'text-green-600' : 'text-red-600'
+                      }`}
+                    >
                       <span>{change >= 0 ? '↗' : '↘'}</span>
                       <span>
                         {formatCurrency(Math.abs(change))} ({Math.abs(changePercent).toFixed(1)}%)
                       </span>
                     </div>
                     <div className="text-xs text-gray-500 mt-1">
-                      {(seriesByAccount.get(account.id) ?? []).length} points
+                      {(seriesByAccount.get(account.id) ?? []).length} {t('historical.points')}
                     </div>
                   </div>
                 );
@@ -198,11 +214,7 @@ export const HistoricalTracking: React.FC = () => {
             <div className="space-y-8">
               {accountsWithAnyTx.map((account) => (
                 <div key={account.id} className="border rounded-lg p-4">
-                  <BalanceChart
-                    account={account}
-                    series={seriesByAccount.get(account.id) ?? []}
-                    height={300}
-                  />
+                  <BalanceChart account={account} series={seriesByAccount.get(account.id) ?? []} height={300} />
                 </div>
               ))}
             </div>
@@ -218,23 +230,29 @@ export const HistoricalTracking: React.FC = () => {
 
               <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-blue-50 rounded-lg p-4">
-                  <h3 className="font-semibold text-blue-800 mb-2">Current Balance</h3>
+                  <h3 className="font-semibold text-blue-800 mb-2">
+                    {t('historical.card.currentBalance')}
+                  </h3>
                   <div className="text-2xl font-bold text-blue-600">
                     {formatCurrency(getLatest(selectedAccount))}
                   </div>
                 </div>
 
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="font-semibold text-gray-800 mb-2">Change</h3>
-                  <div className={`text-2xl font-bold ${
-                    getChangeFromFirst(selectedAccount) >= 0 ? 'text-green-600' : 'text-red-600'
-                  }`}>
+                  <h3 className="font-semibold text-gray-800 mb-2">{t('historical.card.change')}</h3>
+                  <div
+                    className={`text-2xl font-bold ${
+                      getChangeFromFirst(selectedAccount) >= 0 ? 'text-green-600' : 'text-red-600'
+                    }`}
+                  >
                     {formatCurrency(getChangeFromFirst(selectedAccount))}
                   </div>
                 </div>
 
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="font-semibold text-gray-800 mb-2">Data Points</h3>
+                  <h3 className="font-semibold text-gray-800 mb-2">
+                    {t('historical.card.dataPoints')}
+                  </h3>
                   <div className="text-2xl font-bold text-gray-600">
                     {(seriesByAccount.get(selectedAccount) ?? []).length}
                   </div>
