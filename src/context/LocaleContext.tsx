@@ -1,7 +1,13 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { Locale, translations } from '@/lib/i18n/translations';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { Locale, translations } from "@/lib/i18n/translations";
 
 type LocaleContextValue = {
   locale: Locale;
@@ -11,15 +17,19 @@ type LocaleContextValue = {
 
 const LocaleContext = createContext<LocaleContextValue | undefined>(undefined);
 
-const STORAGE_KEY = 'finance-locale';
+const STORAGE_KEY = "finance-locale";
 
-export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [locale, setLocaleState] = useState<Locale>('en');
+export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [locale, setLocaleState] = useState<Locale>("en");
 
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY) as Locale | null;
-      if (saved === 'en' || saved === 'th') setLocaleState(saved);
+      const next = saved === "th" ? "th" : "en";
+      setLocaleState(next);
+      document.documentElement.lang = next;
     } catch {
       // ignore
     }
@@ -42,11 +52,13 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const value = useMemo(() => ({ locale, setLocale, t }), [locale, t]);
 
-  return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
+  return (
+    <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>
+  );
 };
 
 export const useLocale = () => {
   const ctx = useContext(LocaleContext);
-  if (!ctx) throw new Error('useLocale must be used within LocaleProvider');
+  if (!ctx) throw new Error("useLocale must be used within LocaleProvider");
   return ctx;
 };

@@ -8,7 +8,12 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import type {Account, Transaction, AccountWithBalance, DocumentItem} from "@/types/finance";
+import type {
+  Account,
+  Transaction,
+  AccountWithBalance,
+  DocumentItem,
+} from "@/types/finance";
 import { getAccountsWithBalances as computeAccountsWithBalances } from "@/lib/finance";
 import { ACCOUNT_CATEGORIES } from "@/types/finance";
 
@@ -23,16 +28,17 @@ interface FinanceContextType {
   isLoading: boolean;
 
   addAccount: (account: Account) => void;
-
   updateAccount: (
     accountId: string,
     updates: Pick<Account, "name" | "category" | "type">,
   ) => void;
-
   deleteAccount: (accountId: string) => void;
 
   addDocument: (doc: DocumentItem) => void;
-  updateDocument: (docId: string, updates: Partial<Omit<DocumentItem, "id" | "createdAt" | "updatedAt">>) => void;
+  updateDocument: (
+    docId: string,
+    updates: Partial<Omit<DocumentItem, "id" | "createdAt" | "updatedAt">>,
+  ) => void;
   deleteDocument: (docId: string) => void;
 
   addTransaction: (tx: Transaction) => void;
@@ -107,14 +113,16 @@ function normalizeTransactions(raw: any[]): Transaction[] {
         typeof t?.toAccountId === "string" ? t.toAccountId : undefined,
       category,
       note: typeof t?.note === "string" ? t.note : undefined,
-    };
+    } satisfies Transaction;
   });
 }
 
 function normalizeDocuments(raw: any[]): DocumentItem[] {
   return (raw || []).map((d) => {
     const category =
-      d?.category === "property" || d?.category === "valuables" || d?.category === "other"
+      d?.category === "property" ||
+      d?.category === "valuables" ||
+      d?.category === "other"
         ? d.category
         : "insurance";
 
@@ -126,9 +134,13 @@ function normalizeDocuments(raw: any[]): DocumentItem[] {
     return {
       id: typeof d?.id === "string" && d.id.trim() ? d.id : makeId(),
       category,
-      title: typeof d?.title === "string" && d.title.trim() ? d.title.trim() : "Untitled",
+      title:
+        typeof d?.title === "string" && d.title.trim()
+          ? d.title.trim()
+          : "Untitled",
       provider: typeof d?.provider === "string" ? d.provider : undefined,
-      referenceNo: typeof d?.referenceNo === "string" ? d.referenceNo : undefined,
+      referenceNo:
+        typeof d?.referenceNo === "string" ? d.referenceNo : undefined,
       location: typeof d?.location === "string" ? d.location : undefined,
       medicalCoverage: num(d?.medicalCoverage),
       deathBenefit: num(d?.deathBenefit),
@@ -141,7 +153,6 @@ function normalizeDocuments(raw: any[]): DocumentItem[] {
     } satisfies DocumentItem;
   });
 }
-
 
 export const FinanceProvider = ({
   children,
@@ -169,6 +180,7 @@ export const FinanceProvider = ({
     localStorage.setItem(ACC_KEY, JSON.stringify(acc));
     localStorage.setItem(TX_KEY, JSON.stringify(txs));
     localStorage.setItem(DOC_KEY, JSON.stringify(docs));
+
     setIsLoading(false);
   }, []);
 
@@ -181,6 +193,11 @@ export const FinanceProvider = ({
     if (isLoading) return;
     localStorage.setItem(TX_KEY, JSON.stringify(transactions));
   }, [transactions, isLoading]);
+
+  useEffect(() => {
+    if (isLoading) return;
+    localStorage.setItem(DOC_KEY, JSON.stringify(documents));
+  }, [documents, isLoading]);
 
   const addAccount = (account: Account) => {
     const next: Account = {
@@ -211,6 +228,11 @@ export const FinanceProvider = ({
 
   const deleteAccount = (accountId: string) => {
     setAccounts((prev) => prev.filter((a) => a.id !== accountId));
+    setTransactions((prev) =>
+      prev.filter(
+        (t) => t.fromAccountId !== accountId && t.toAccountId !== accountId,
+      ),
+    );
   };
 
   const addDocument = (doc: DocumentItem) => {
@@ -233,7 +255,10 @@ export const FinanceProvider = ({
           ? {
               ...d,
               ...updates,
-              title: typeof updates.title === "string" ? updates.title.trim() : d.title,
+              title:
+                typeof updates.title === "string"
+                  ? updates.title.trim()
+                  : d.title,
               updatedAt: new Date(),
             }
           : d,
@@ -246,10 +271,7 @@ export const FinanceProvider = ({
   };
 
   const addTransaction = (tx: Transaction) => {
-    const next: Transaction = {
-      ...tx,
-      id: tx?.id?.trim() ? tx.id : makeId(),
-    };
+    const next: Transaction = { ...tx, id: tx?.id?.trim() ? tx.id : makeId() };
     setTransactions((prev) => [next, ...prev]);
   };
 
