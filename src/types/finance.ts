@@ -52,3 +52,31 @@ export const ACCOUNT_CATEGORIES: ACCOUNT_CATEGORIES_TYPE = {
     'Other Liabilities',
   ],
 } as const;
+export type DocumentCategory = 'insurance' | 'property' | 'valuables' | 'other';
+
+export interface DocumentItem {
+  id: string;
+  category: DocumentCategory;
+
+  // Human-friendly title (e.g., "AIA Life Policy", "Chanote - Chiang Mai", "Gold Bar")
+  title: string;
+
+  // Optional metadata
+  provider?: string; // insurer / bank / office
+  referenceNo?: string; // policy no / deed no / certificate no
+  location?: string; // where it's kept / province / storage location
+
+  // Insurance (optional)
+  medicalCoverage?: number; // healthcare coverage
+  deathBenefit?: number; // payout on death
+
+  // Property / valuables (optional)
+  areaSqm?: number; // land/house area
+  quantity?: number; // e.g., rings count, grams
+  estimatedValue?: number; // user-estimated value (base currency)
+
+  notes?: string;
+
+  createdAt: Date;
+  updatedAt: Date;
+}

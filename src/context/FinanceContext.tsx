@@ -8,16 +8,18 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import type { Account, Transaction, AccountWithBalance } from "@/types/finance";
+import type {Account, Transaction, AccountWithBalance, DocumentItem} from "@/types/finance";
 import { getAccountsWithBalances as computeAccountsWithBalances } from "@/lib/finance";
 import { ACCOUNT_CATEGORIES } from "@/types/finance";
 
 const ACC_KEY = "finance-accounts";
 const TX_KEY = "finance-transactions";
+const DOC_KEY = "finance-documents";
 
 interface FinanceContextType {
   accounts: Account[];
   transactions: Transaction[];
+  documents: DocumentItem[];
   isLoading: boolean;
 
   addAccount: (account: Account) => void;
@@ -28,6 +30,10 @@ interface FinanceContextType {
   ) => void;
 
   deleteAccount: (accountId: string) => void;
+
+  addDocument: (doc: DocumentItem) => void;
+  updateDocument: (docId: string, updates: Partial<Omit<DocumentItem, "id" | "createdAt" | "updatedAt">>) => void;
+  deleteDocument: (docId: string) => void;
 
   addTransaction: (tx: Transaction) => void;
   deleteTransaction: (txId: string) => void;
@@ -105,6 +111,38 @@ function normalizeTransactions(raw: any[]): Transaction[] {
   });
 }
 
+function normalizeDocuments(raw: any[]): DocumentItem[] {
+  return (raw || []).map((d) => {
+    const category =
+      d?.category === "property" || d?.category === "valuables" || d?.category === "other"
+        ? d.category
+        : "insurance";
+
+    const num = (v: any): number | undefined => {
+      const n = typeof v === "number" ? v : Number(v);
+      return Number.isFinite(n) ? n : undefined;
+    };
+
+    return {
+      id: typeof d?.id === "string" && d.id.trim() ? d.id : makeId(),
+      category,
+      title: typeof d?.title === "string" && d.title.trim() ? d.title.trim() : "Untitled",
+      provider: typeof d?.provider === "string" ? d.provider : undefined,
+      referenceNo: typeof d?.referenceNo === "string" ? d.referenceNo : undefined,
+      location: typeof d?.location === "string" ? d.location : undefined,
+      medicalCoverage: num(d?.medicalCoverage),
+      deathBenefit: num(d?.deathBenefit),
+      areaSqm: num(d?.areaSqm),
+      quantity: num(d?.quantity),
+      estimatedValue: num(d?.estimatedValue),
+      notes: typeof d?.notes === "string" ? d.notes : undefined,
+      createdAt: d?.createdAt ? new Date(d.createdAt) : new Date(),
+      updatedAt: d?.updatedAt ? new Date(d.updatedAt) : new Date(),
+    } satisfies DocumentItem;
+  });
+}
+
+
 export const FinanceProvider = ({
   children,
 }: {
@@ -112,20 +150,25 @@ export const FinanceProvider = ({
 }) => {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const accRaw = safeParse<any[]>(localStorage.getItem(ACC_KEY), []);
     const txRaw = safeParse<any[]>(localStorage.getItem(TX_KEY), []);
+    const docRaw = safeParse<any[]>(localStorage.getItem(DOC_KEY), []);
 
     const acc = normalizeAccounts(accRaw);
     const txs = normalizeTransactions(txRaw);
+    const docs = normalizeDocuments(docRaw);
 
     setAccounts(acc);
     setTransactions(txs);
+    setDocuments(docs);
 
     localStorage.setItem(ACC_KEY, JSON.stringify(acc));
     localStorage.setItem(TX_KEY, JSON.stringify(txs));
+    localStorage.setItem(DOC_KEY, JSON.stringify(docs));
     setIsLoading(false);
   }, []);
 
@@ -170,6 +213,38 @@ export const FinanceProvider = ({
     setAccounts((prev) => prev.filter((a) => a.id !== accountId));
   };
 
+  const addDocument = (doc: DocumentItem) => {
+    const next: DocumentItem = {
+      ...doc,
+      id: doc?.id?.trim() ? doc.id : makeId(),
+      createdAt: doc?.createdAt ? new Date(doc.createdAt) : new Date(),
+      updatedAt: new Date(),
+    };
+    setDocuments((prev) => [next, ...prev]);
+  };
+
+  const updateDocument = (
+    docId: string,
+    updates: Partial<Omit<DocumentItem, "id" | "createdAt" | "updatedAt">>,
+  ) => {
+    setDocuments((prev) =>
+      prev.map((d) =>
+        d.id === docId
+          ? {
+              ...d,
+              ...updates,
+              title: typeof updates.title === "string" ? updates.title.trim() : d.title,
+              updatedAt: new Date(),
+            }
+          : d,
+      ),
+    );
+  };
+
+  const deleteDocument = (docId: string) => {
+    setDocuments((prev) => prev.filter((d) => d.id !== docId));
+  };
+
   const addTransaction = (tx: Transaction) => {
     const next: Transaction = {
       ...tx,
@@ -190,6 +265,7 @@ export const FinanceProvider = ({
       {
         accounts,
         transactions,
+        documents,
         exportedAt: new Date().toISOString(),
         version: 1,
       },
@@ -207,29 +283,40 @@ export const FinanceProvider = ({
     const txs = normalizeTransactions(
       Array.isArray(parsed?.transactions) ? parsed.transactions : [],
     );
+    const docs = normalizeDocuments(
+      Array.isArray(parsed?.documents) ? parsed.documents : [],
+    );
 
     setAccounts(acc);
     setTransactions(txs);
+    setDocuments(docs);
 
     localStorage.setItem(ACC_KEY, JSON.stringify(acc));
     localStorage.setItem(TX_KEY, JSON.stringify(txs));
+    localStorage.setItem(DOC_KEY, JSON.stringify(docs));
   };
 
   const clearAllData = () => {
     setAccounts([]);
     setTransactions([]);
+    setDocuments([]);
     localStorage.removeItem(ACC_KEY);
     localStorage.removeItem(TX_KEY);
+    localStorage.removeItem(DOC_KEY);
   };
 
   const value: FinanceContextType = useMemo(
     () => ({
       accounts,
       transactions,
+      documents,
       isLoading,
       addAccount,
       updateAccount,
       deleteAccount,
+      addDocument,
+      updateDocument,
+      deleteDocument,
       addTransaction,
       deleteTransaction,
       getAccountsWithBalances,
@@ -237,7 +324,7 @@ export const FinanceProvider = ({
       importData,
       clearAllData,
     }),
-    [accounts, transactions, isLoading],
+    [accounts, transactions, documents, isLoading],
   );
 
   return (

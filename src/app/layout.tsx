@@ -5,6 +5,7 @@ import { FinanceProvider } from "@/context/FinanceContext";
 import { CurrencyProvider } from "@/context/CurrencyContext";
 import { LocaleProvider } from "@/context/LocaleContext";
 import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 import ClientOnly from "@/components/ClientOnly";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 
@@ -25,19 +26,23 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white`}
+        suppressHydrationWarning
+      >
         <ClientOnly>
           <LocaleProvider>
             <FinanceProvider>
               <CurrencyProvider>
                 <GoogleAnalytics />
-                <Navigation />
-                <main>{children}</main>
+                <div className="min-h-screen flex flex-col">
+                  <Navigation />
+                  <main className="flex-1">{children}</main>
+                  <Footer />
+                </div>
               </CurrencyProvider>
             </FinanceProvider>
           </LocaleProvider>
