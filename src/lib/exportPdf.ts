@@ -13,6 +13,10 @@ export async function exportElementToPdf(
     cacheBust: true,
     pixelRatio: 2,
     backgroundColor: '#ffffff',
+    filter: (node) => {
+      if (!(node instanceof HTMLElement)) return true;
+      return !node.closest('[data-pdf-exclude="true"]');
+    },
   });
 
   const pdf = new jsPDF({

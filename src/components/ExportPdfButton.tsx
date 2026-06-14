@@ -5,7 +5,7 @@ import { exportElementToPdf } from "@/lib/exportPdf";
 import { useLocale } from "@/context/LocaleContext";
 
 type Props = {
-  targetRef: React.RefObject<HTMLElement>;
+  targetRef: React.RefObject<HTMLElement | null>;
   filename?: string;
   label?: string;
   className?: string;

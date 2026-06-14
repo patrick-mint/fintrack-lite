@@ -505,7 +505,7 @@ export const translations: Record<Locale, Dict> = {
     
     "documents.summary.total": "Total",
     
-    "common.exporting": "Exported",
+    "common.exporting": "Exporting...",
     
     "documents.updated": "Updated",
     
@@ -1007,7 +1007,7 @@ export const translations: Record<Locale, Dict> = {
     
     "documents.summary.total": "รวม",
     
-    "common.exporting": "ส่งออกสำเร็จ",
+    "common.exporting": "กำลังส่งออก...",
     
     "documents.updated": "อัปเดต",
     

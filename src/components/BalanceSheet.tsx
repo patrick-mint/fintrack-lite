@@ -117,6 +117,7 @@ export const BalanceSheet: React.FC = () => {
                     </span>
 
                     <button
+                      data-pdf-exclude="true"
                       onClick={() => setEditingAccount(account)}
                       className="text-blue-600 hover:text-blue-800 text-sm px-2 py-1 rounded hover:bg-blue-50 transition-colors"
                       title={t("balanceSheet.editAccount")}
@@ -125,6 +126,7 @@ export const BalanceSheet: React.FC = () => {
                     </button>
 
                     <button
+                      data-pdf-exclude="true"
                       onClick={() => deleteAccount(account.id)}
                       className="text-red-500 hover:text-red-700 text-sm px-2 py-1 rounded hover:bg-red-50 transition-colors"
                       title={t("balanceSheet.deleteAccount")}
@@ -187,27 +189,22 @@ export const BalanceSheet: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto">
+      <div className="mb-4 flex flex-wrap items-center justify-end gap-3">
+        <CurrencySelector size="sm" />
+        <ExportPdfButton
+          targetRef={exportRef}
+          filename={`balance-sheet-${getTodayString()}.pdf`}
+        />
+      </div>
+
       <div ref={exportRef} className="bg-white rounded-lg shadow-lg p-6">
-        <div className="flex items-start justify-between gap-3 mb-8">
-          <div className="min-w-0 text-center flex-1">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">
-              {t("balanceSheet.title")}
-            </h1>
-            <p className="text-gray-600" suppressHydrationWarning>
-              {t("balanceSheet.asOf")} {new Date().toLocaleDateString()}
-            </p>
-          </div>
-
-          <div className="shrink-0 print:hidden">
-            <ExportPdfButton
-              targetRef={exportRef}
-              filename={`balance-sheet-${getTodayString()}.pdf`}
-            />
-          </div>
-        </div>
-
-        <div className="mb-8 flex justify-end">
-          <CurrencySelector size="sm" />
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            {t("balanceSheet.title")}
+          </h1>
+          <p className="text-gray-600" suppressHydrationWarning>
+            {t("balanceSheet.asOf")} {new Date().toLocaleDateString()}
+          </p>
         </div>
 
         {groupedAccounts.asset && (

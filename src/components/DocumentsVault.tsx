@@ -216,7 +216,11 @@ export const DocumentsVault: React.FC = () => {
             </div>
           </div>
 
-          <form onSubmit={onSubmit} className="space-y-4">
+          <form
+            data-pdf-exclude="true"
+            onSubmit={onSubmit}
+            className="space-y-4"
+          >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -550,7 +554,10 @@ export const DocumentsVault: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div
+                      data-pdf-exclude="true"
+                      className="flex items-center gap-2 shrink-0"
+                    >
                       <button
                         onClick={() => onEdit(d)}
                         className="px-3 py-1.5 text-sm rounded-md border border-gray-300 hover:bg-white"
